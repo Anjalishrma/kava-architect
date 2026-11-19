@@ -1,0 +1,4 @@
+# Uploaded project images. Scripts never run here.
+<FilesMatch "\.(php|phtml|phar)$">
+  Require all denied
+</FilesMatch>
