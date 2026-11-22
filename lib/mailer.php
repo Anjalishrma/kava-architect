@@ -7,9 +7,12 @@ function send_mail(array $to, string $subject, string $body, string $replyTo = '
     $from = setting('from_email'); $fromName = setting('from_name', 'KAVA Architect');
     if (!filter_var($from, FILTER_VALIDATE_EMAIL)) return [false, 'Set a valid From address in Email settings.'];
     $strip = fn($s) => str_replace(["\r", "\n"], ' ', (string)$s);
+    // Some providers (Yahoo) refuse a Reply-To that differs from the sender, so only use it where it is accepted.
+    $host = setting('smtp_host');
+    $replyTo = trim($replyTo);
+    if (!filter_var($replyTo, FILTER_VALIDATE_EMAIL) || strcasecmp($replyTo, $from) === 0 || preg_match('/yahoo|ymail|aol\./i', $host)) $replyTo = '';
     $encSubject = '=?UTF-8?B?' . base64_encode($strip($subject)) . '?=';
     $encName = '=?UTF-8?B?' . base64_encode($strip($fromName)) . '?=';
-    $host = setting('smtp_host');
     if ($host === '') {
         $headers = "From: $encName <$from>\r\nMIME-Version: 1.0\r\nContent-Type: text/plain; charset=UTF-8\r\nContent-Transfer-Encoding: 8bit"
             . ($replyTo ? "\r\nReply-To: " . $strip($replyTo) : '');

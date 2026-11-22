@@ -23,7 +23,7 @@ $pdo->prepare('INSERT INTO enquiries(name,email,phone,project,site,start_time,br
     ->execute([$e['name'], $e['email'], $e['phone'], $e['project'], $e['site'], $e['start_time'], $e['brief'], $e['message'], $ip, $e['source']]);
 $id = (int)$pdo->lastInsertId();
 
-$lines = ["New lead #$id from the website " . strtolower($e['source']), '',
+$lines = ["New lead #$id from the website " . strtolower($e['source']), "Reply to this person at: {$e['email']}" . ($e['phone'] ? " / {$e['phone']}" : ''), '',
     "Name:    {$e['name']}", "Email:   {$e['email']}", "Phone:   {$e['phone']}", "Project: {$e['project']}", "Site:    {$e['site']}", "Start:   {$e['start_time']}"];
 if ($e['brief']) $lines[] = "Brief:   {$e['brief']}";
 if ($e['message']) { $lines[] = ''; $lines[] = 'Message:'; $lines[] = $e['message']; }
